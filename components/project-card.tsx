@@ -76,14 +76,16 @@ export function ProjectCard({ project, variant = "compact", className }: Props) 
           >
             <GithubIcon size={14} /> GitHub
           </a>
-          <a
-            href={project.demo}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            <ExternalLink size={14} /> Live Demo
-          </a>
+          {project.demo && (
+            <a
+              href={project.demo}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            >
+              <ExternalLink size={14} /> Live Demo
+            </a>
+          )}
         </div>
       )}
     </article>
