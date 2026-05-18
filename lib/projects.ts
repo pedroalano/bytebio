@@ -9,38 +9,38 @@ export type Project = {
   demo: string;
 };
 
-// TODO: replace URLs, problem text, and decisions with your own content
 export const projects: Project[] = [
   {
-    slug: "finances",
-    title: "Finances App",
-    tagline: "Personal finance tracker with budgets and reports.",
+    slug: "my-pocket",
+    title: "My Pocket",
+    tagline: "Personal finance monorepo: transactions, budgets, recurring entries.",
     problem:
-      "Spreadsheets break down when you want shared budgets, recurring entries, and quick monthly summaries. Finances App is a focused alternative that keeps your data private and the workflow fast.",
+      "Spreadsheets and single-app finance trackers struggle once you add multi-account tracking, recurring entries, budgets, and locale-aware reports. My Pocket bundles all of it in one self-hostable stack with strict per-user isolation.",
     decisions: [
-      "Server actions over a sprawling REST surface — fewer endpoints, less typing duplication.",
-      "Prisma for schema-as-source-of-truth; migrations stay reviewable in PRs.",
-      "NextAuth with email magic links — no password storage to worry about.",
-      "PostgreSQL for relational integrity on transactions and category rollups.",
+      "Turborepo monorepo (NestJS API + Next.js 15 web + shared packages) keeps types and tooling consistent across boundaries.",
+      "Short-lived JWT access tokens (15m) with revocable refresh tokens (7d); mandatory email verification before first login.",
+      "Hourly scheduler materializes recurring transactions, so reports stay accurate without manual entry.",
+      "Locale-aware money formatting (USD/BRL) via next-intl + nestjs-i18n instead of hard-coded currency.",
+      "Structured JSON logging shipped to Loki/Promtail/Grafana in production for real observability.",
     ],
-    stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "NextAuth"],
-    github: "https://github.com/pedroalano/finances",
-    demo: "https://finances.example.com",
+    stack: ["Next.js 15", "NestJS", "TypeScript", "PostgreSQL", "Prisma", "Turborepo", "Docker"],
+    github: "https://github.com/pedroalano/my-pocket",
+    demo: "",
   },
   {
-    slug: "habit-focus",
-    title: "Habit / Focus App",
-    tagline: "Habit tracking paired with deep focus sessions.",
+    slug: "zenfocus",
+    title: "ZenFocus",
+    tagline: "Daily focus surface + Kanban engine in one dashboard.",
     problem:
-      "Most habit apps lose context between intention and execution. Habit/Focus links each habit to focus sessions so the streak reflects actual deep work, not just box-checking.",
+      "Productivity tooling fragments daily intention-setting from ongoing project work. ZenFocus unifies a minimalist daily focus view with a real Kanban board so context-switching between apps disappears.",
     decisions: [
-      "SQLite via file-backed DB — single-user app, zero ops overhead.",
-      "Cron jobs roll over daily streaks at the user's local midnight, not UTC.",
-      "Pure-function streak logic with property-based tests against edge cases.",
-      "Optimistic UI for habit toggles, with rollback on server error.",
+      "Shared packages/types is the single source of truth for network shapes — no DTO duplication across NestJS API and Next.js client.",
+      "Stateless JWT access tokens (15m) + Redis-backed refresh rotation (7d) — revocation without persistent sessions.",
+      "Socket.io scoped to board card sync only; conflicts resolved last-write-wins by server timestamp.",
+      "Pomodoro timer runs fully client-side (Zustand + localStorage) — zero backend coupling for the focus loop.",
     ],
-    stack: ["Next.js", "TypeScript", "SQLite", "Cron jobs", "Streak logic"],
-    github: "https://github.com/pedroalano/habit-focus",
-    demo: "https://habits.example.com",
+    stack: ["Next.js 14", "NestJS", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io", "Zustand"],
+    github: "https://github.com/pedroalano/discipline-equals-freedom",
+    demo: "",
   },
 ];
