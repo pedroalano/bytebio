@@ -2,9 +2,13 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Section } from "@/components/section";
 import { ProjectCard } from "@/components/project-card";
+import { PostCard } from "@/components/post-card";
 import { projects } from "@/lib/projects";
+import { getAllPosts } from "@/lib/posts";
 
 export default function HomePage() {
+  const latestPosts = getAllPosts().slice(0, 2);
+
   return (
     <>
       <Section className="pt-20 pb-12 md:pt-28">
@@ -57,19 +61,20 @@ export default function HomePage() {
       </Section>
 
       <Section className="py-12">
-        <h2 className="text-2xl font-semibold tracking-tight">Latest from the blog</h2>
-        {/* TODO: wire to real blog posts later */}
-        <article className="mt-6 rounded-lg border border-border border-t-2 border-t-accent bg-card p-6 transition-colors hover:border-accent">
-          <p className="text-xs font-medium uppercase tracking-wider text-accent">
-            Coming soon
-          </p>
-          <h3 className="mt-2 text-lg font-semibold tracking-tight">
-            Notes on building small backend systems that age well
-          </h3>
-          <p className="mt-2 text-sm text-muted">
-            A teaser for the first post. Long-form writing lands here soon.
-          </p>
-        </article>
+        <div className="flex items-end justify-between">
+          <h2 className="text-2xl font-semibold tracking-tight">Latest from the blog</h2>
+          <Link
+            href="/blog"
+            className="text-sm text-muted hover:text-accent transition-colors"
+          >
+            View all →
+          </Link>
+        </div>
+        <div className="mt-6 flex flex-col gap-5">
+          {latestPosts.map((post) => (
+            <PostCard key={post.slug} post={post} />
+          ))}
+        </div>
       </Section>
     </>
   );
