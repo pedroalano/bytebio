@@ -1,0 +1,54 @@
+---
+title: Notes on building small backend systems that age well
+date: 2026-05-19
+excerpt: A look at the decisions that make backend services easy to change years later.
+tags: [backend, architecture]
+---
+
+Most backend services I've worked with that turned into nightmares didn't start out that way. They started simple. Then they grew — organically, urgently, without a moment to breathe — until the code that once made sense started to feel like a coral reef: beautiful in a way, but you can't quite tell what's load-bearing anymore.
+
+I've been thinking about what the inverse looks like. What makes a small backend system stay legible and changeable over time?
+
+## Name things after what they mean, not what they do
+
+The first trap is function names that describe mechanics instead of intent.
+
+`processPayment()` tells you what happens. `chargeCardAndUpdateLedger()` tells you more. But neither tells you *why* — under what contract, in response to what event, with what downstream effects. When I look at code I wrote two years ago, the name I regret most are the ones that describe the *how*.
+
+Better names are domain-first: `confirmOrder()`, `reconcileMonthlyBalance()`, `issueRefundForCancelledBooking()`. They carry business meaning. You can read them in a standup without translating.
+
+## One service, one reason to change
+
+Conway's Law is real. If three teams own different parts of one service, three teams will modify it simultaneously and break each other's assumptions. The inverse is also true: if one team owns a focused service, the service stays focused.
+
+For personal projects — where the team is just me — I use a different heuristic: **one service, one data model it owns**. Not reads from, not joins into — *owns*. If a service needs to write to two separate unrelated tables, that's a signal it might be doing too much.
+
+This keeps migrations tractable. It keeps tests focused. And when you eventually want to move fast on one feature, you don't have to trace fifteen files to understand what you'll break.
+
+## Boring infrastructure, interesting product
+
+The most durable systems I've seen treat infrastructure choices with deliberate conservatism. PostgreSQL over the newest distributed SQL. Redis for caching and queues, not a custom in-memory store. Docker Compose for local parity, not a bespoke script that only works on the maintainer's machine.
+
+The interesting bets should be in the *product* — the logic, the UX, the data model. If you're solving a novel problem, you want your dependencies to be boring so the novelty lives where it matters.
+
+I've been burned by choosing an early-stage ORM for its ergonomics, then spending a weekend migrating off it when it stopped being maintained. That weekend was not interesting in the good way.
+
+## Structured logs are worth the boilerplate
+
+Console.log survives a weekend project. It doesn't survive production.
+
+The jump to structured logging (`JSON`, shipped to Loki or Datadog) feels ceremonial at first — you're writing more code to log less-readable text. But when something goes wrong at 11pm and you need to find *which* of 50k requests caused a database deadlock, you'll want to filter by `user_id`, `trace_id`, and `status >= 500`.
+
+I now start every new service with a logger configured from day one. The discipline compounds.
+
+## Tests that fail when the behavior breaks — not when the code changes
+
+This is the hardest one.
+
+Tests that mock the database, mock the ORM, and mock the HTTP client are testing *the code as written*. They're not testing behavior. When you refactor — move a method, rename a module, extract a helper — they fail. You fix the mocks. They pass. Nothing changed for the user.
+
+I've moved toward integration tests that hit a real database (in a container) and unit tests only for pure logic that has no I/O. The coverage metric is lower. The confidence is higher.
+
+---
+
+These aren't universal rules. They're patterns I keep returning to after diverging from them and regretting it. If you're building something small and want it to stay comprehensible — these are the places I'd start.
