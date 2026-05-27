@@ -8,14 +8,14 @@ export const metadata = { title: "About — Pedro Alano" };
 export default function AboutPage() {
   return (
     <>
-      <Section className="pt-20 pb-8 md:pt-24">
+      <Section className="pt-20 pb-8 md:pt-24 md:pb-10">
         <p className="text-sm font-medium text-accent">About</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
           A short story, and the tools I reach for.
         </h1>
       </Section>
 
-      <Section className="py-8">
+      <Section className="py-8 md:py-10">
         {/* TODO: replace with your personal story */}
         <div className="prose-content max-w-2xl space-y-4 text-base leading-relaxed text-foreground/90">
           <p>
@@ -30,7 +30,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section className="py-8">
+      <Section className="py-8 md:py-10">
         <h2 className="text-2xl font-semibold tracking-tight">My stack</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stackGroups.map((group) => (
@@ -51,7 +51,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section className="py-12">
+      <Section className="py-12 md:py-14">
         {/* TODO: drop your real CV at public/cv.pdf */}
         <a
           href="/cv.pdf"
